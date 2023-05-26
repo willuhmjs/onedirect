@@ -1,27 +1,28 @@
-try {
 import { Application } from "https://deno.land/x/abc@v1.3.3/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.21.4/mod.ts";
-import { Message, Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
+import { Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const app = new Application();
 
-console.log("http://localhost:8080/");
+console.log("Listening on http://localhost:8080/");
 let site = "https://example.com";
-const correctPin = new Sha256().update((Deno.env.get("PIN") as Message) || "1234").toString();
+
+const correctPin = new Sha256().update(Deno.env.get("PIN") || "1234").toString();
+
+const login = await Deno.readTextFile("./login.html");
+const admin = await Deno.readTextFile("./admin.html");
 
 app
-  .get("/", (c) => {
-    c.redirect(site);
-  })
-  .get("/admin", async (c) => {
-    if (c.cookies.pin === correctPin) {
-      return (await Deno.readTextFile("./admin.html")).replace(
+  .get("/", ({ redirect }) => redirect(site))
+  .get("/admin", ({ cookies }) => {
+    if (cookies.pin === correctPin) {
+      return admin.replace(
         "{{site}}",
         site,
       );
     } else {
-      return await Deno.readTextFile("./login.html");
+      return login;
     }
   })
   .post("/admin/login", async (c) => {
@@ -40,13 +41,12 @@ app
         maxAge: 60 * 60 * 24,
         httpOnly: true,
       });
-      c.redirect("/admin");
-    } else {
-      c.redirect("/admin");
     }
+
+    c.redirect("/admin");
   })
   .post("/admin/update", async (c) => {
-    if (!c.cookies?.pin || c.cookies.pin !== correctPin) {
+    if (c.cookies?.pin !== correctPin) {
       return c.redirect("/admin");
     }
     const body = await c.body;
@@ -60,6 +60,3 @@ app
     c.redirect("/admin");
   })
   .start({ port: 8080 });
-} catch (e) {
-  console.error(e);
-}
