@@ -14,7 +14,7 @@ app
   .get("/admin", async (c) => {
     const { pin } = c.cookies;
     if (pin === correctPin) {
-      return await Deno.readTextFile("./admin.html");
+      return (await Deno.readTextFile("./admin.html")).replace("{{site}}", site);
     } else {
       c.setCookie({
         name: "pin",
