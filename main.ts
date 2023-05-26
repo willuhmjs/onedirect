@@ -5,7 +5,8 @@ import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const app = new Application();
 
-console.log("Listening on http://localhost:8080/");
+const port = Deno.env.get("PORT") || 8080
+console.log(`Listening on http://localhost:${port}/`);
 let site = "https://example.com";
 
 const correctPin = new Sha256().update(Deno.env.get("PIN") || "1234").toString();
@@ -59,4 +60,4 @@ app
     site = type.data.url;
     c.redirect("/admin");
   })
-  .start({ port: 8080 });
+  .start({ port });
