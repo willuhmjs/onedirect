@@ -1,3 +1,4 @@
+try {
 import { Application } from "https://deno.land/x/abc@v1.3.3/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.21.4/mod.ts";
 import { Message, Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
@@ -59,3 +60,6 @@ app
     c.redirect("/admin");
   })
   .start({ port: 8080 });
+} catch (e) {
+  console.error(e);
+}
