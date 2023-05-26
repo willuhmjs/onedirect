@@ -19,13 +19,6 @@ app
         site,
       );
     } else {
-      c.setCookie({
-        name: "pin",
-        value: "",
-        maxAge: 0.1,
-        httpOnly: true,
-      });
-
       return await Deno.readTextFile("./login.html");
     }
   })
@@ -59,7 +52,6 @@ app
       url: z.string(),
     }).safeParse(body);
     if (!type.success) {
-      console.log("failed");
       return c.redirect("/admin");
     }
     site = type.data.url;
