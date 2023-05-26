@@ -1,12 +1,13 @@
 import { Application } from "https://deno.land/x/abc@v1.3.3/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.21.4/mod.ts";
-import { Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
+import { Message, Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
+import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const app = new Application();
 
 console.log("http://localhost:8080/");
 let site = "https://example.com";
-const correctPin = new Sha256().update("1234").toString();
+const correctPin = new Sha256().update((Deno.env.get("PIN") as Message) || "1234").toString();
 
 app
   .get("/", (c) => {
