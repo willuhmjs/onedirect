@@ -1,19 +1,19 @@
 import { Application } from "https://deno.land/x/abc@v1.3.3/mod.ts";
 import { z } from "https://deno.land/x/zod@v3.21.4/mod.ts";
+import { Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
 
 const app = new Application();
 
 console.log("http://localhost:8080/");
 let site = "https://example.com";
-const correctPin = "1234";
+const correctPin = new Sha256().update("1234").toString();
 
 app
   .get("/", (c) => {
     c.redirect(site);
   })
   .get("/admin", async (c) => {
-    const { pin } = c.cookies;
-    if (pin === correctPin) {
+    if (c.cookies.pin === correctPin) {
       return (await Deno.readTextFile("./admin.html")).replace(
         "{{site}}",
         site,
@@ -22,8 +22,10 @@ app
       c.setCookie({
         name: "pin",
         value: "",
-        maxAge: 1,
+        maxAge: 0.1,
+        httpOnly: true,
       });
+
       return await Deno.readTextFile("./login.html");
     }
   })
@@ -36,11 +38,12 @@ app
       return c.redirect("/admin");
     }
     const { pin } = type.data;
-    if (pin === correctPin) {
+    if (new Sha256().update(pin).toString() === correctPin) {
       c.setCookie({
         name: "pin",
-        value: pin,
+        value: correctPin,
         maxAge: 60 * 60 * 24,
+        httpOnly: true,
       });
       c.redirect("/admin");
     } else {
@@ -48,7 +51,7 @@ app
     }
   })
   .post("/admin/update", async (c) => {
-    if (!c.cookies?.pin) {
+    if (!c.cookies?.pin || c.cookies.pin !== correctPin) {
       return c.redirect("/admin");
     }
     const body = await c.body;
