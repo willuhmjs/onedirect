@@ -26,7 +26,7 @@ router
     }
   })
   .post("/admin/login", async (ctx) => {
-    const body = await ctx.request.body({ type: "form" }).value
+    const body = await ctx.request.body({ type: "form" }).value;
 
     const pin = body.get("pin") || "";
     if (new Sha256().update(pin).toString() === correctPin) {
