@@ -1,6 +1,60 @@
-<body>
-    <form method="POST" action="/admin/login">
-        <input type="password" name="pin" placeholder="Password">
-        <input type="submit" value="Login">
-    </form>
-</body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!DOCTYPE html>        
+        <style>
+            body {
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+    
+            form {
+                width: 500px;
+            }
+    
+            input {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+    
+            input[type=submit] {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+            }
+    
+            input[type=submit]:hover {
+                background-color: #45a049;
+                cursor: pointer;
+            }
+    
+            input[type=text] {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+    
+            input[type=text]:focus {
+                border: 3px solid #555;
+            }
+        </style>
+    </head>
+    <body>
+        <form method="POST" action="/admin/login">
+            <input type="password" name="pin" placeholder="Password">
+            <input type="submit" value="Login">
+        </form>
+    </body>    
+</html>
