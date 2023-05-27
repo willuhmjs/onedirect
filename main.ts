@@ -47,7 +47,8 @@ router
     const body = await ctx.request.body({ type: "form" }).value;
     site = body.get("url") || "";
     ctx.response.redirect("/admin");
-  });
+  })
+  .get("(.*)", (ctx) => ctx.response.redirect(site));
 
 const app = new Application();
 app.use(router.routes());
