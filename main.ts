@@ -2,7 +2,7 @@ import { Application, Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
-let site = "https://example.com";
+let site = "https://rickhider.vercel.app/gotcha.mp4";
 
 const correctPin = new Sha256().update(Deno.env.get("PIN") || "1234")
   .toString();
