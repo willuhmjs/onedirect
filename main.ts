@@ -4,7 +4,7 @@ import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const kv = await Deno.openKv();
 
-const site = async () => (await kv.get("site") || "https://rickhider.vercel.app/gotcha.mp4");
+const site = async () => await kv.get(["site"])?.value || "https://rickhider.vercel.app/gotcha.mp4";
 
 const correctPin = new Sha256().update(Deno.env.get("PIN") || "1234")
   .toString();
@@ -56,5 +56,6 @@ const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
 
+console.log(await site())
 console.log("Server running on http://localhost:8080");
 await app.listen({ port: 8080 });
