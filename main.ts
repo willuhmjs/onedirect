@@ -47,7 +47,7 @@ router
     }
 
     const body = await ctx.request.body({ type: "form" }).value;
-    await kv.set("[site]", body.get("url") || "");
+    await kv.set(["site"], body.get("url") || "");
     ctx.response.redirect("/admin");
   })
   .get("(.*)", async (ctx) => ctx.response.redirect(await site()));
