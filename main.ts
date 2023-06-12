@@ -4,7 +4,10 @@ import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
 const kv = await Deno.openKv();
 
-const site = async () => await kv.get(["site"])?.value || "https://rickhider.vercel.app/gotcha.mp4";
+const site = async () => {
+  const url = await kv.get(["site"]);
+  return url ? url.value : "https://example.com";
+}
 
 const correctPin = new Sha256().update(Deno.env.get("PIN") || "1234")
   .toString();
