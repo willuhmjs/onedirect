@@ -2,7 +2,9 @@ import { Application, Router } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { Sha256 } from "https://deno.land/std@0.119.0/hash/sha256.ts";
 import "https://deno.land/x/dotenv@v3.2.2/load.ts";
 
-let site = "https://rickhider.vercel.app/gotcha.mp4";
+const kv = await Deno.openKv();
+
+const site = async () => (await kv.get("site") || "https://rickhider.vercel.app/gotcha.mp4");
 
 const correctPin = new Sha256().update(Deno.env.get("PIN") || "1234")
   .toString();
@@ -13,13 +15,13 @@ const admin = await Deno.readTextFile("./admin.html");
 const router = new Router();
 
 router
-  .get("/", (ctx) => ctx.response.redirect(site))
+  .get("/", async (ctx) => ctx.response.redirect(await site()))
   .get("/admin", async (ctx) => {
     const pin = await ctx.cookies.get("pin") || "";
     if (pin === correctPin) {
       ctx.response.body = admin.replace(
         "{{site}}",
-        site,
+        await site(),
       );
     } else {
       ctx.response.body = login;
@@ -45,10 +47,10 @@ router
     }
 
     const body = await ctx.request.body({ type: "form" }).value;
-    site = body.get("url") || "";
+    await kv.put("site", body.get("url") || "");
     ctx.response.redirect("/admin");
   })
-  .get("(.*)", (ctx) => ctx.response.redirect(site));
+  .get("(.*)", async (ctx) => ctx.response.redirect(await site()));
 
 const app = new Application();
 app.use(router.routes());
